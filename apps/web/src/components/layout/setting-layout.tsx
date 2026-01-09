@@ -40,8 +40,7 @@ export default function SettingLayout({
 		<SidebarProvider>
 			<SettingSidebar />
 			<div className="h-svh w-full overflow-hidden lg:p-2">
-				{isMobile?<SidebarTrigger/>:<span>Preferences</span>}
-
+				{isMobile&&<SidebarTrigger/>}
 				<div className="flex h-full w-full flex-col items-center justify-start overflow-hidden bg-container lg:rounded-md lg:border">
 
 					{header}

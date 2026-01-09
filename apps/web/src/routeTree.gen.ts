@@ -21,7 +21,6 @@ import { Route as publicPrivacyRouteImport } from './routes/(public)/privacy'
 import { Route as authenicatedDashboardRouteImport } from './routes/(authenicated)/dashboard'
 import { Route as authenicatedOnboardingRouteRouteImport } from './routes/(authenicated)/onboarding/route'
 import { Route as authenicatedOnboardingCompleteRouteImport } from './routes/(authenicated)/onboarding/complete'
-import { Route as authenicatedSettingsAccountSecurityIndexRouteImport } from './routes/(authenicated)/settings/account/security/index'
 import { Route as authenicatedSettingsAccountProfileIndexRouteImport } from './routes/(authenicated)/settings/account/profile/index'
 import { Route as authenicatedSettingsAccountPreferencesIndexRouteImport } from './routes/(authenicated)/settings/account/preferences/index'
 
@@ -85,12 +84,6 @@ const authenicatedOnboardingCompleteRoute =
     path: '/complete',
     getParentRoute: () => authenicatedOnboardingRouteRoute,
   } as any)
-const authenicatedSettingsAccountSecurityIndexRoute =
-  authenicatedSettingsAccountSecurityIndexRouteImport.update({
-    id: '/settings/account/security/',
-    path: '/settings/account/security/',
-    getParentRoute: () => authenicatedRouteRoute,
-  } as any)
 const authenicatedSettingsAccountProfileIndexRoute =
   authenicatedSettingsAccountProfileIndexRouteImport.update({
     id: '/settings/account/profile/',
@@ -117,7 +110,6 @@ export interface FileRoutesByFullPath {
   '/onboarding/complete': typeof authenicatedOnboardingCompleteRoute
   '/settings/account/preferences': typeof authenicatedSettingsAccountPreferencesIndexRoute
   '/settings/account/profile': typeof authenicatedSettingsAccountProfileIndexRoute
-  '/settings/account/security': typeof authenicatedSettingsAccountSecurityIndexRoute
 }
 export interface FileRoutesByTo {
   '/onboarding': typeof authenicatedOnboardingRouteRouteWithChildren
@@ -132,7 +124,6 @@ export interface FileRoutesByTo {
   '/onboarding/complete': typeof authenicatedOnboardingCompleteRoute
   '/settings/account/preferences': typeof authenicatedSettingsAccountPreferencesIndexRoute
   '/settings/account/profile': typeof authenicatedSettingsAccountProfileIndexRoute
-  '/settings/account/security': typeof authenicatedSettingsAccountSecurityIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -150,7 +141,6 @@ export interface FileRoutesById {
   '/(authenicated)/onboarding/complete': typeof authenicatedOnboardingCompleteRoute
   '/(authenicated)/settings/account/preferences/': typeof authenicatedSettingsAccountPreferencesIndexRoute
   '/(authenicated)/settings/account/profile/': typeof authenicatedSettingsAccountProfileIndexRoute
-  '/(authenicated)/settings/account/security/': typeof authenicatedSettingsAccountSecurityIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -167,7 +157,6 @@ export interface FileRouteTypes {
     | '/onboarding/complete'
     | '/settings/account/preferences'
     | '/settings/account/profile'
-    | '/settings/account/security'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/onboarding'
@@ -182,7 +171,6 @@ export interface FileRouteTypes {
     | '/onboarding/complete'
     | '/settings/account/preferences'
     | '/settings/account/profile'
-    | '/settings/account/security'
   id:
     | '__root__'
     | '/(authenicated)'
@@ -199,7 +187,6 @@ export interface FileRouteTypes {
     | '/(authenicated)/onboarding/complete'
     | '/(authenicated)/settings/account/preferences/'
     | '/(authenicated)/settings/account/profile/'
-    | '/(authenicated)/settings/account/security/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -296,13 +283,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenicatedOnboardingCompleteRouteImport
       parentRoute: typeof authenicatedOnboardingRouteRoute
     }
-    '/(authenicated)/settings/account/security/': {
-      id: '/(authenicated)/settings/account/security/'
-      path: '/settings/account/security'
-      fullPath: '/settings/account/security'
-      preLoaderRoute: typeof authenicatedSettingsAccountSecurityIndexRouteImport
-      parentRoute: typeof authenicatedRouteRoute
-    }
     '/(authenicated)/settings/account/profile/': {
       id: '/(authenicated)/settings/account/profile/'
       path: '/settings/account/profile'
@@ -339,7 +319,6 @@ interface authenicatedRouteRouteChildren {
   authenicatedDashboardRoute: typeof authenicatedDashboardRoute
   authenicatedSettingsAccountPreferencesIndexRoute: typeof authenicatedSettingsAccountPreferencesIndexRoute
   authenicatedSettingsAccountProfileIndexRoute: typeof authenicatedSettingsAccountProfileIndexRoute
-  authenicatedSettingsAccountSecurityIndexRoute: typeof authenicatedSettingsAccountSecurityIndexRoute
 }
 
 const authenicatedRouteRouteChildren: authenicatedRouteRouteChildren = {
@@ -350,8 +329,6 @@ const authenicatedRouteRouteChildren: authenicatedRouteRouteChildren = {
     authenicatedSettingsAccountPreferencesIndexRoute,
   authenicatedSettingsAccountProfileIndexRoute:
     authenicatedSettingsAccountProfileIndexRoute,
-  authenicatedSettingsAccountSecurityIndexRoute:
-    authenicatedSettingsAccountSecurityIndexRoute,
 }
 
 const authenicatedRouteRouteWithChildren =

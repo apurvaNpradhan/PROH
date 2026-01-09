@@ -1,3 +1,4 @@
+import PublicLayout from '@/components/layout/public-layout'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(public)/tos')({
@@ -5,5 +6,5 @@ export const Route = createFileRoute('/(public)/tos')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/(public)/tos"!</div>
+  return <PublicLayout headerContent="Terms of Service">Hello "/(public)/tos"!</PublicLayout>
 }

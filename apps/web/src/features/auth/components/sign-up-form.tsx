@@ -3,6 +3,7 @@ import { env } from "@base/env/web";
 import {
 	IconBrandGithubFilled,
 	IconBrandGoogleFilled,
+	IconLoader2,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
@@ -21,11 +22,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { usePending } from "@/components/ui/pending";
 
 const signUpSchema = z
 	.object({
 		name: z.string().min(2, "Name must be at least 2 characters"),
-		email: z.string().email("Invalid email address"),
+		email: z.email("Invalid email address"),
 		password: z.string().min(8, "Password must be at least 8 characters"),
 		confirmPassword: z
 			.string()
@@ -53,6 +56,9 @@ export default function SignUpForm({
 		},
 	});
 
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { pendingProps, isPending } = usePending({ isPending: isSubmitting });
+
 	const handleSocialSignIn = async (provider: "google" | "github") => {
 		await authClient.signIn.social({
 			provider,
@@ -61,26 +67,30 @@ export default function SignUpForm({
 	};
 
 	const onSubmit = async (data: SignUpValues) => {
+		setIsSubmitting(true);
 		toast.promise(
-			authClient.signUp.email(
-				{
-					email: data.email,
-					password: data.password,
-					name: data.name,
-					callbackURL: `${env.VITE_BASE_URL}/dashboard`,
-				},
-				{
-					onSuccess: () => {
-						navigate({
-							to: "/dashboard",
-						});
-					},
-				},
-			),
+			(async () => {
+				const { data: resData, error } = await authClient.signUp.email(
+					{
+						email: data.email,
+						password: data.password,
+						name: data.name,
+						callbackURL: `${env.VITE_BASE_URL}/dashboard`,
+					}
+				);
+
+				if (error) {
+					setIsSubmitting(false);
+					throw error;
+				}
+
+				navigate({ to: "/dashboard" });
+				return resData;
+			})(),
 			{
 				loading: "Creating account...",
 				success: "Signed up successfully. Please check your email for verification.",
-				error: (ctx) => ctx.error.message || "Failed to sign up",
+				error: (error) => error.message || "Failed to sign up",
 			},
 		);
 	};
@@ -105,7 +115,7 @@ export default function SignUpForm({
 									name="name"
 									render={({ field, fieldState }) => (
 										<>
-											<Input {...field} id="name" placeholder="John Doe" />
+											<Input {...field} id="name" disabled={isPending} placeholder="John Doe" />
 											{fieldState.error && (
 												<FieldError errors={[fieldState.error]} />
 											)}
@@ -125,6 +135,7 @@ export default function SignUpForm({
 												{...field}
 												id="email"
 												type="email"
+												disabled={isPending}
 												placeholder="m@example.com"
 											/>
 											{fieldState.error && (
@@ -152,6 +163,7 @@ export default function SignUpForm({
 														{...field}
 														id="password"
 														type="password"
+														disabled={isPending}
 														autoComplete="new-password"
 													/>
 													{fieldState.error && (
@@ -174,6 +186,7 @@ export default function SignUpForm({
 														{...field}
 														id="confirm-password"
 														type="password"
+														disabled={isPending}
 														autoComplete="new-password"
 													/>
 													{fieldState.error && (
@@ -190,10 +203,9 @@ export default function SignUpForm({
 							</Field>
 
 							<Field>
-								<Button type="submit" disabled={form.formState.isSubmitting}>
-									{form.formState.isSubmitting
-										? "Creating..."
-										: "Create Account"}
+								<Button type="submit" disabled={isPending} {...pendingProps}>
+									{isPending && <IconLoader2 className="size-4 animate-spin" />}
+									{isPending ? "Creating..." : "Create Account"}
 								</Button>
 							</Field>
 							<FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
@@ -203,6 +215,8 @@ export default function SignUpForm({
 								<Button
 									variant="outline"
 									type="button"
+									disabled={isPending}
+									{...pendingProps}
 									onClick={() => handleSocialSignIn("github")}
 								>
 									<IconBrandGithubFilled className="mr-2 h-4 w-4" />
@@ -211,6 +225,8 @@ export default function SignUpForm({
 								<Button
 									variant="outline"
 									type="button"
+									disabled={isPending}
+									{...pendingProps}
 									onClick={() => handleSocialSignIn("google")}
 								>
 									<IconBrandGoogleFilled className="mr-2 h-4 w-4" />

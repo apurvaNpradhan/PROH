@@ -1,18 +1,24 @@
-import { IconArrowLeft, IconUser, IconSettings2, IconShieldLock } from "@tabler/icons-react";
+import { IconArrowLeft, IconSettings2 } from "@tabler/icons-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useRouter } from "@tanstack/react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarGroup,
 	SidebarGroupContent,
+	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { useRouteActive } from "@/hooks/use-active-route";
+import { sessionQueryOptions } from "@/lib/auth-client";
 
-export function SettingSidebar({  
+export function SettingSidebar({
 	...props
 }: React.ComponentProps<typeof Sidebar>) {
+	const { data: session } = useSuspenseQuery(sessionQueryOptions);
+	const user = session?.data?.user;
 	const isActive = useRouteActive();
 	const router = useRouter();
 	const onBack = () => {
@@ -33,9 +39,30 @@ export function SettingSidebar({
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup className="p-0">
+					<SidebarGroupLabel className=" font-medium text-muted-foreground/80">
+						Account
+					</SidebarGroupLabel>
 					<SidebarGroupContent className="flex flex-col gap-1">
 						<SidebarMenuButton
-							size={"sm"}
+							isActive={isActive("/settings/account/profile")}
+							onClick={() =>
+								navigate({
+									to: "/settings/account/profile",
+								})
+							}
+						>
+							<Avatar className="h-6 w-6 rounded-full border">
+								<AvatarImage src={user?.image ?? ""} alt={user?.name} />
+								<AvatarFallback className="rounded-full text-[10px]">
+									{user?.name
+										?.split(" ")
+										.map((name) => name.charAt(0))
+										.join("")}
+								</AvatarFallback>
+							</Avatar>
+							<span className="font-medium">{user?.name}</span>
+						</SidebarMenuButton>
+						<SidebarMenuButton
 							isActive={isActive("/settings/account/preferences")}
 							onClick={() =>
 								navigate({
@@ -45,30 +72,6 @@ export function SettingSidebar({
 						>
 							<IconSettings2 />
 							Preferences
-						</SidebarMenuButton>
-						<SidebarMenuButton
-							size={"sm"}
-							isActive={isActive("/settings/account/profile")}
-							onClick={() =>
-								navigate({
-									to: "/settings/account/profile",
-								})
-							}
-						>
-							<IconUser />
-							Profile
-						</SidebarMenuButton>
-						<SidebarMenuButton
-							size={"sm"}
-							isActive={isActive("/settings/account/security")}
-							onClick={() =>
-								navigate({
-									to: "/settings/account/security",
-								})
-							}
-						>
-							<IconShieldLock />
-							Security
 						</SidebarMenuButton>
 					</SidebarGroupContent>
 				</SidebarGroup>

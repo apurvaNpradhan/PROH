@@ -3,6 +3,7 @@ import { env } from "@base/env/web";
 import {
 	IconBrandGithubFilled,
 	IconBrandGoogleFilled,
+	IconLoader2,
 } from "@tabler/icons-react";
 import { Link, redirect, useNavigate } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
@@ -29,9 +30,11 @@ import { Input } from "@/components/ui/input";
 import { authClient, sessionQueryOptions } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { queryClient } from "@/utils/orpc";
+import { usePending } from "@/components/ui/pending";
+import { useState } from "react";
 
 const signInSchema = z.object({
-	email: z.string().email("Invalid email address"),
+	email: z.email("Invalid email address"),
 	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
@@ -42,7 +45,6 @@ export default function SignInForm({
 	...props
 }: React.ComponentProps<"div">) {
 	const navigate = useNavigate();
-	
 	const form = useForm<SignInValues>({
 		resolver: zodResolver(signInSchema),
 		defaultValues: {
@@ -50,6 +52,8 @@ export default function SignInForm({
 			password: "",
 		},
 	});
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const {pendingProps, isPending} = usePending({isPending: isSubmitting});
 
 	const handleSocialSignIn = async (provider: "google" | "github") => {
 		await authClient.signIn.social({
@@ -59,14 +63,18 @@ export default function SignInForm({
 	};
 
 	const onSubmit = async (data: SignInValues) => {
+		setIsSubmitting(true);
+		
 		toast.promise(
 			(async () => {
 				const { data: resData, error } = await authClient.signIn.email({
 					email: data.email,
 					password: data.password,
+
 				});
 
 				if (error) {
+					setIsSubmitting(false);
 					throw error;
 				}
 
@@ -95,7 +103,8 @@ export default function SignInForm({
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<FieldGroup>
 							<Field className="grid grid-cols-2 gap-4">
-								<Button
+								<Button disabled={isPending}
+								{...pendingProps}
 									variant="outline"
 									type="button"
 									onClick={() => handleSocialSignIn("github")}
@@ -104,8 +113,9 @@ export default function SignInForm({
 									<IconBrandGithubFilled className="mr-2 h-4 w-4" />
 									Github
 								</Button>
-								<Button
+								<Button disabled={isPending}
 									variant="outline"
+									{...pendingProps}
 									type="button"
 									onClick={() => handleSocialSignIn("google")}
 									className="relative w-full"
@@ -130,6 +140,7 @@ export default function SignInForm({
 												{...field}
 												id="email"
 												type="email"
+												disabled={isPending}
 												placeholder="m@example.com"
 											/>
 											{fieldState.error && (
@@ -158,6 +169,7 @@ export default function SignInForm({
 												{...field}
 												id="password"
 												type="password"
+												disabled={isPending}
 												autoComplete="current-password"
 											/>
 											{fieldState.error && (
@@ -168,9 +180,9 @@ export default function SignInForm({
 								/>
 							</Field>
 							<Field>
-								<Button type="submit" disabled={form.formState.isSubmitting}>
-									{form.formState.isSubmitting ? "Logging in..." : "Login"}
-								</Button>
+								<Button type="submit" disabled={isPending} {...pendingProps}>
+ {isPending && <IconLoader2 className="size-4 animate-spin" />}
+        {isPending ? "Signing in..." : "Sign in"}								</Button>
 								<FieldDescription className="text-center">
 									Don&apos;t have an account?{" "}
 									<Link to="/sign-up" className="text-primary hover:underline">

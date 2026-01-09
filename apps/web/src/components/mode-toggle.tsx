@@ -5,34 +5,13 @@ import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
 	const { theme, setTheme } = useTheme();
-	const [reveal, setReveal] = React.useState<{
-		x: number;
-		y: number;
-		color: string;
-	} | null>(null);
 
-	function toggleTheme(e: React.MouseEvent) {
-		const rect = e.currentTarget.getBoundingClientRect();
-		const x = rect.left + rect.width / 2;
-		const y = rect.top + rect.height / 2;
-
+	function toggleTheme() {
 		const nextTheme = theme === "dark" ? "light" : "dark";
-
-		setReveal({
-			x,
-			y,
-			color: nextTheme === "dark" ? "#000" : "#fff",
-		});
-
-		setTimeout(() => {
-			setTheme(nextTheme);
-		}, 80);
-
-		setTimeout(() => setReveal(null), 1000);
+		setTheme(nextTheme);
 	}
 
 	return (
-		<>
 			<Button
 				variant="ghost"
 				size="icon-sm"
@@ -44,20 +23,5 @@ export function ModeToggle() {
 				<span className="sr-only">Toggle theme</span>
 			</Button>
 
-			{reveal && (
-				<div
-					className="theme-reveal pointer-events-none fixed z-[9999] rounded-full"
-					style={{
-						left: reveal.x,
-						top: reveal.y,
-						width: 300,
-						height: 300,
-						background: reveal.color,
-						transformOrigin: "center",
-						translate: "-50% -50%",
-					}}
-				/>
-			)}
-		</>
 	);
 }

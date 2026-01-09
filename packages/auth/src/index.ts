@@ -49,13 +49,12 @@ export const auth = betterAuth({
 		},
 	},
 
-	// uncomment cookieCache setting when ready to deploy to Cloudflare using *.workers.dev domains
-	// session: {
-	//   cookieCache: {
-	//     enabled: true,
-	//     maxAge: 60,
-	//   },
-	// },
+/* 	 session: {
+	   cookieCache: {
+	     enabled: true,
+	     maxAge: 2*60,
+	   },
+	 }, */
 	socialProviders: {
 		github: {
 			enabled: true,

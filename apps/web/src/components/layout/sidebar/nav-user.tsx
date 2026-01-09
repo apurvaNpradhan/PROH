@@ -10,11 +10,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/utils/orpc";
 
 export function NavUser({ user }: { user: User }) {
-	const { isMobile } = useSidebar();
 	const navigate = useNavigate();
 	return (
 		<DropdownMenu>
@@ -26,9 +26,9 @@ export function NavUser({ user }: { user: User }) {
 					/>
 				}
 			>
-				<Avatar className="h-8 w-8 rounded-lg">
+				<Avatar className="h-8 w-8 rounded-full border">
 					<AvatarImage src={user.image ?? ""} alt={user.name} />
-					<AvatarFallback className="rounded-lg">
+					<AvatarFallback className="rounded-full">
 						{user.name
 							.split(" ")
 							.map((name) => name.charAt(0))
@@ -36,8 +36,7 @@ export function NavUser({ user }: { user: User }) {
 					</AvatarFallback>
 				</Avatar>
 				<div className="grid flex-1 text-left text-sm leading-tight">
-					<span className="truncate font-semibold">{user.name}</span>
-					<span className="truncate text-xs">{user.email}</span>
+					<span className="truncate font-medium">{user.name}</span>
 				</div>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
@@ -66,7 +65,7 @@ export function NavUser({ user }: { user: User }) {
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem
-						onClick={() => navigate({ to: "/settings/account/preferences" })}
+						onClick={() => navigate({ to: "/settings/account/profile" })}
 					>
 						<IconSettings className="size-4 text-muted-foreground" />
 						Settings
@@ -75,7 +74,6 @@ export function NavUser({ user }: { user: User }) {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					variant="destructive"
-					gap-2
 					onClick={() => {
 						authClient.signOut({
 							fetchOptions: {
@@ -83,6 +81,7 @@ export function NavUser({ user }: { user: User }) {
 									navigate({
 										to: "/",
 									});
+									queryClient.invalidateQueries();
 								},
 							},
 						});
