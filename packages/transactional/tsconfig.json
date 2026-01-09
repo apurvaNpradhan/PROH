@@ -1,6 +1,6 @@
 {
-  "extends": "@base/config/tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-  }
+	"extends": "@stronk/config/tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "react-jsx"
+	}
 }

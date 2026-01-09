@@ -1,9 +1,7 @@
-import {
-	inferAdditionalFields,
-} from "better-auth/client/plugins";
+import type { auth } from "@stronk/auth";
+import { env } from "@stronk/env/web";
+import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { env } from "@base/env/web";
-import type { auth } from "@base/auth";
 export const authClient = createAuthClient({
 	baseURL: env.VITE_SERVER_URL,
 	plugins: [inferAdditionalFields<typeof auth>()],
